@@ -1,1 +1,23 @@
-My Citadels implementation embraces core object-oriented principles to create a flexible and maintainable design. At its foundation is an abstract Player class that encapsulates shared state such as player ID, gold, hand, and built city, while declaring abstract methods like draw(...) and takeTurn(...). This class is extended by two concrete subclasses: HumanPlayer, which handles user input through console commands, and AIPlayer, which follows a simple strategy of drawing cards or taking gold, then building the most expensive district it can afford. Fixed domains such as character roles and card colors are modeled using Java enums, with Character including rank and a custom toString() method, and Color providing a fromString(...) factory method, ensuring compile-time safety and preventing invalid values. The design favors composition over inheritance for “has-a” relationships: the Game class owns a DistrictDeck and aggregates a list of Player objects, while each Player maintains lists of DistrictCard objects representing their hand and city. Responsibilities are cleanly separated by introducing a CommandProcessor class to handle all console input and delegate actions to the game engine, allowing the Game class to focus solely on rules and state transitions in line with the Single Responsibility Principle. The implementation is thoroughly tested using JUnit in SampleTest.java, achieving over 95% code coverage and validating functionality such as deck initialization, income and build logic, phase transitions, persistence, and end-game scoring. Persistence is implemented using JSON via the JSON-Simple library, where Game.save(filename) serializes the full game state including phase, turn order, player data, hands, and cities into a JSON file, and Game.load(filename) restores this state by reconstructing players and their data. All I/O exceptions are handled gracefully with user-friendly messages. This extension demonstrates the Open/Closed Principle by adding persistence without modifying core game logic.
+The game begins by prompting the user on how many players will be in the game. Then the initial setup of the game occurs, which involves shuffling the district card deck, randomly assigning the crown token, giving each player 2 gold tokens, and dealing 4 district cards to each player. Then rounds begin, and each round is divided into two phases: Character Selection phase, and Turn phase. Rounds will continue until the game ends (if one player builds 8 districts in their city, then the game will end at the end of the round) then points are totalled, and a winner is determined. 
+
+Command                | Description
+-----------------------|------------------------------------------------------------
+t                      | Process turns — proceed to the next sequence in the game,
+                       | e.g., the next computer player makes their turn.
+hand                   | Display the cards in your hand and the amount of gold you have.
+gold                   | Display the amount of gold you have (e.g., You have 4 gold).
+build <h>              | Builds a district from your hand. h is the position of the
+                       | card in your hand. Duplicate buildings are not allowed.
+citadel [p]            | Display the districts in a player's city.
+list [p]               | If p is not provided, defaults to player 1.
+city [p]               | Example: citadel 2 displays player 2’s city.
+info <h>               | Gives information about a purple building in your hand.
+info <name>            | Gives information about a character.
+end                    | Ends your turn. Output: You ended your turn.
+all                    | Display info about all players, including number of cards
+                       | in hand, gold, and districts built in their city.
+save <file>            | Saves the current game state in JSON format.
+load <file>            | Loads the game state from a file.
+help                   | Displays the help message.
+debug                  | Toggles debug mode (shows computer players’ hands).
+
